@@ -15,21 +15,21 @@ def generate_response(model_name, user_message):
         "messages": [
             {
                 "role": "system",
-                "content": "отвечай на русском языке"
+                "content": "answer in english"
             },
             {
                 "role": "user",
                 "content": user_message
             }
         ],
-        "max_tokens": 1000,
+        "max_tokens": 4000,
         "temperature": 0.3
     }
 
     response = requests.post(f"{API_URL}/completions", json=data, headers=headers)
     if response.status_code == 200:
         result = response.json()
-        # Извлечение и вывод ответа от ассистента
+
         if 'choices' in result and len(result['choices']) > 0:
             message = result['choices'][0].get('message', {})
             if message.get('role') == 'assistant':
@@ -44,8 +44,18 @@ def generate_response(model_name, user_message):
 
 
 def main():
-    user_message = input("Введите ваш вопрос модели: ")
-    generate_response('mistral-nemo-instruct-2407', user_message)
+    try:
+        with open('prompt.txt', 'r', encoding='utf-8') as f:
+            user_message = f.read().strip()
+            print("Ввод из файла: " + user_message)
+
+        if user_message:
+            generate_response('mistral-nemo-instruct-2407', user_message)
+        else:
+            print("Файл prompt.txt пуст.")
+
+    except FileNotFoundError:
+        print("Файл prompt.txt не найден.")
 
 
 if __name__ == "__main__":

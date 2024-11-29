@@ -1,15 +1,14 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-import zipfile
 import os
-from io import BytesIO
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from backend.src.archive_handler import parse_archive
 
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
 
 # Эндпоинт для загрузки архива (любого типа)
 @app.post("/upload-archive/")
@@ -24,6 +23,7 @@ async def upload_archive(file: UploadFile = File(...)):
         return {"structure": structure}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 # Эндпоинт для загрузки исходного кода (Python, C# или TypeScript)
 @app.post("/upload-code/")
