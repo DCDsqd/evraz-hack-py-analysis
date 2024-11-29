@@ -1,0 +1,35 @@
+{
+  "structure": "├── gis/
+│   ├── .gitignore
+│   ├── .gitlab-ci.yml
+│   ├── APP_NAME_IS_UNDEFINED-ACTIVE_PROFILE_IS_UNDEFINED.log
+│   ├── Dockerfile
+│   ├── etc/
+│   │   ├── prometheus-jmx-conf.yaml
+│   ├── gis-eb-adapter-ACTIVE_PROFILE_IS_UNDEFINED.log
+│   ├── gis-eb-adapter-example.log
+│   ├── gis-eb-adapter-local.log
+│   ├── pom.xml
+│   ├── README.md
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   ├── ru/
+│   │   │   │   │   ├── seventech/
+│   │   │   │   │   │   ├── gisebadapter/
+│   │   │   │   │   │   │   ├── Application.java
+│   │   │   │   │   │   │   ├── config/
+│   │   │   │   │   │   │   │   ├── AsyncConfig.java
+│   │   │   │   │   │   │   │   ├── MdmRabbitConfig.java
+│   │   │   │   │   │   │   │   ├── SmevRabbitConfig.java
+│   │   │   │   │   │   │   ├── controller/
+│   │   │   │   │   │   │   │   ├── DateUtils.java
+│   │   │   │   │   │   │   │   ├── PageResponse.java
+│   │   │   │   │   │   │   │   ├── ProtocolsController.java
+│   │   │   │   │   │   │   │   ├── RequestSubsidyDetailsController.java
+│   │   │   │   │   │   │   │   ├── SchedulerController.java
+│   │   │   │   │   │   │   │   ├── SelectionCipherAndLinkController.java
+│   │   │   │   │   │   │   │   ├── WinnersController.java
+│   │   │   │   │   │   │   ├── dao/
+│   │   │   │   │   │   │   │   ├── BaseDao.java
+│   │   │   │   │   │   │   │   ├── ProtocolsDao.java
