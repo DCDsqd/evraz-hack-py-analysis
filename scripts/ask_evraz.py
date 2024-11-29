@@ -22,7 +22,7 @@ def generate_response(model_name, user_message):
                 "content": user_message
             }
         ],
-        "max_tokens": 1000,
+        "max_tokens": 1024,
         "temperature": 0.3
     }
 

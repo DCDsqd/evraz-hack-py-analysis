@@ -1,4 +1,6 @@
 import requests
+import json
+
 
 API_URL = "http://84.201.152.196:8020/v1"
 API_KEY = "Nmg7hPuSdKsluqNiBBzwL9Stz5JKGEx4"
@@ -30,7 +32,24 @@ def get_models():
         return []
 
 
-def generate_response(user_message, system_message, model_name=MODEL_NAME):
+def get_default_context():
+    static_context_arr = {}
+    try:
+        with open('static_context.json', 'r', encoding='utf-8') as f:
+            static_context_data = json.load(f)
+            static_context_arr = static_context_data.get('static_context', {})
+    except FileNotFoundError:
+        print("Файл static_context.json не найден.")
+    except json.JSONDecodeError:
+        print("Ошибка декодирования JSON из файла static_context.json.")
+
+    return static_context_arr
+
+
+def generate_response(user_message, system_message, static_context_arr=None, model_name=MODEL_NAME):
+    if not static_context_arr:
+        static_context_arr = get_default_context()
+
     data = {
         "model": model_name,
         "messages": [
@@ -38,6 +57,7 @@ def generate_response(user_message, system_message, model_name=MODEL_NAME):
                 "role": "system",
                 "content": system_message
             },
+            static_context_arr,
             {
                 "role": "user",
                 "content": user_message

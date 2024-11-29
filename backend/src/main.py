@@ -1,14 +1,12 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
-import zipfile
 import os
+import zipfile
 from io import BytesIO
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from backend.src.archive_handler import parse_archive
-from fastapi import FastAPI, File, UploadFile, HTTPException, Query
 from enum import Enum
 from backend.src.archive_handler import parse_archive
 
 app = FastAPI()
+
 
 # Enum для выбора языка проекта
 class Language(str, Enum):
@@ -16,15 +14,16 @@ class Language(str, Enum):
     csharp = "csharp"
     typescript = "typescript"
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-# Эндпоинт для загрузки архива с выбором языка
+
 @app.post("/upload-archive/")
 async def upload_archive(
-    file: UploadFile = File(...),
-    language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
+        file: UploadFile = File(...),
+        language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
 ):
     try:
         # Чтение архива из памяти
@@ -42,11 +41,11 @@ async def upload_archive(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# Эндпоинт для загрузки исходного кода (Python, C# или TypeScript)
+
 @app.post("/upload-code/")
 async def upload_code(
-    file: UploadFile = File(...),
-    language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
+        file: UploadFile = File(...),
+        language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
 ):
     try:
         # Прочитать файл с кодом
@@ -55,7 +54,7 @@ async def upload_code(
         os.makedirs(os.path.dirname(code_path), exist_ok=True)
 
         with open(code_path, 'wb') as f:
-            f.write(code_content)  # Сохранить файл с кодом
+            f.write(code_content)
 
         return {"message": f"File '{file.filename}' uploaded successfully!", "language": language}
     except Exception as e:
