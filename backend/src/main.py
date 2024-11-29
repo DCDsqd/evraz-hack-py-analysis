@@ -6,9 +6,11 @@ from io import BytesIO
 
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
 
 @app.post("/upload-project-archive/")
 async def upload_archive(file: UploadFile = File(...)):
