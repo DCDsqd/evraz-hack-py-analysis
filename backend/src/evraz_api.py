@@ -3,6 +3,8 @@ import requests
 API_URL = "http://84.201.152.196:8020/v1"
 API_KEY = "Nmg7hPuSdKsluqNiBBzwL9Stz5JKGEx4"
 
+MODEL_NAME = 'mistral-nemo-instruct-2407'
+
 headers = {
     "Authorization": API_KEY,
     "Content-Type": "application/json"
@@ -28,23 +30,17 @@ def get_models():
         return []
 
 
-def generate_response(model_name, user_message):
+def generate_response(user_message, system_message, model_name=MODEL_NAME):
     data = {
         "model": model_name,
         "messages": [
             {
                 "role": "system",
-                "content": "отвечай на русском языке"
+                "content": system_message
             },
             {
                 "role": "user",
-                "content": """у меня есть структура проекта, опиши ее словами my_project/
-                                                                ├── app/
-                                                                │   ├── __init__.py
-                                                                │   ├── main.py
-                                                                │   ├── archive_handler.py  # Модуль для работы с архивами
-                                                                ├── requirements.txt
-                                                                └── README.md"""
+                "content": user_message
             }
         ],
         "max_tokens": 1000,
@@ -69,19 +65,6 @@ def generate_response(model_name, user_message):
 
 
 def main():
-    # models = get_models()
-    generate_response('mistral-nemo-instruct-2407', "Как дела?")
-
-    # if models:
-        # Выбираем первую доступную модель
-    #     model_name = models[0] if isinstance(models, list) and len(models) > 0 else None
-    #     if model_name:
-    #         # Генерируем ответ с использованием выбранной модели
-    #
-    #     else:
-    #         print(" Не удалось получить корректное название модели.")
-    # else:
-    #     print(" Список моделей пуст или не был получен.")
 
 
 if __name__ == "__main__":
