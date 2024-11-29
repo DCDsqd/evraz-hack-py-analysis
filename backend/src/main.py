@@ -1,31 +1,42 @@
-from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, File, UploadFile, HTTPException
 import zipfile
 import os
 from io import BytesIO
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from backend.src.archive_handler import parse_archive
 
 app = FastAPI()
-
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-
-@app.post("/upload-project-archive/")
+# Эндпоинт для загрузки архива (любого типа)
+@app.post("/upload-archive/")
 async def upload_archive(file: UploadFile = File(...)):
-    # Проверка на тип файла
-    if file.content_type != 'application/zip':
-        return JSONResponse(content={"error": "File is not a zip archive"}, status_code=400)
-
     try:
         # Чтение архива из памяти
-        zip_content = await file.read()
-        with zipfile.ZipFile(BytesIO(zip_content)) as archive:
-            archive.extractall("extracted_files")  # Извлечь содержимое архива
-            return {"message": "Archive uploaded and extracted successfully!"}
+        archive_content = await file.read()
 
-    except zipfile.BadZipFile:
-        return JSONResponse(content={"error": "Bad zip file"}, status_code=400)
+        # Парсим структуру архива
+        structure = parse_archive(archive_content)
+
+        return {"structure": structure}
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        raise HTTPException(status_code=400, detail=str(e))
+
+# Эндпоинт для загрузки исходного кода (Python, C# или TypeScript)
+@app.post("/upload-code/")
+async def upload_code(file: UploadFile = File(...)):
+    try:
+        # Прочитать файл с кодом
+        code_content = await file.read()
+        code_path = os.path.join("uploaded_code", file.filename)
+        os.makedirs(os.path.dirname(code_path), exist_ok=True)
+
+        with open(code_path, 'wb') as f:
+            f.write(code_content)  # Сохранить файл с кодом
+
+        return {"message": f"File '{file.filename}' uploaded successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
