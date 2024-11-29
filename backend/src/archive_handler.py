@@ -1,7 +1,7 @@
-import zipfile
+from io import BytesIO
 import os
 import uuid
-from io import BytesIO
+import zipfile
 
 
 def parse_archive(archive_content: bytes, root_dir: str = "extracted_files"):
@@ -10,21 +10,25 @@ def parse_archive(archive_content: bytes, root_dir: str = "extracted_files"):
 
     :param archive_content: Содержимое архива в байтах.
     :param root_dir: Корневая папка для извлечения файлов.
-    :return: Строка, представляющая структуру архива.
+    :return: Путь к извлеченной папке и строку с иерархией файлов и папок.
     """
     # Генерация уникального идентификатора для каждой сессии
-    unique_dir = str(uuid.uuid4())
+    unique_dir = str(uuid.uuid4())  # Создаем уникальную папку для каждого запроса
     extract_path = os.path.join(root_dir, unique_dir)
 
     try:
+        # Создаем директорию для извлечения
         os.makedirs(extract_path, exist_ok=True)
 
+        # Открываем и распаковываем архив
         with zipfile.ZipFile(BytesIO(archive_content)) as archive:
             archive.extractall(extract_path)  # Извлекаем все файлы в уникальную папку
 
-            # Получаем структуру файлов и директорий
+            # Получаем структуру директорий
             structure = get_directory_structure(extract_path)
-            return structure
+
+            # Возвращаем путь к извлеченной папке и структуру
+            return extract_path, structure
 
     except zipfile.BadZipFile:
         raise Exception("Bad zip file")
@@ -32,20 +36,20 @@ def parse_archive(archive_content: bytes, root_dir: str = "extracted_files"):
         raise Exception(f"Error extracting archive: {str(e)}")
 
 
-def get_directory_structure(root_dir: str, indent: str = "") -> str:
+def get_directory_structure(root_dir: str) -> str:
     """
-    Рекурсивно обходит директорию и строит строку с её иерархией.
-
+    Получает структуру директорий и файлов в виде строки с отступами.
     :param root_dir: Путь к корневой директории.
-    :param indent: Отступ для текущего уровня.
-    :return: Строка с иерархией файлов и папок.
+    :return: Строка, представляющая структуру файлов и папок.
     """
     structure = ""
-    for item in os.listdir(root_dir):
-        item_path = os.path.join(root_dir, item)
-        if os.path.isdir(item_path):
-            structure += f"{indent}├── {item}/\n"
-            structure += get_directory_structure(item_path, indent + "│   ")
-        else:
-            structure += f"{indent}├── {item}\n"
+    for root, dirs, files in os.walk(root_dir):
+        # Определяем уровень вложенности
+        level = root.replace(root_dir, '').count(os.sep)
+        indent = ' ' * 4 * level
+        structure += f"{indent}{os.path.basename(root)}/\n"
+
+        # Добавляем файлы на текущем уровне
+        for f in files:
+            structure += f"{indent}    {f}\n"
     return structure

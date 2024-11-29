@@ -1,9 +1,8 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Query
 import os
-import zipfile
-from io import BytesIO
+from fastapi import FastAPI, File, UploadFile, HTTPException, Query
 from enum import Enum
 from backend.src.archive_handler import parse_archive
+from backend.src.linter import lint_python, lint_typescript, lint_csharp, generate_pdf_report
 
 app = FastAPI()
 
@@ -22,24 +21,35 @@ def read_root():
 
 @app.post("/upload-archive/")
 async def upload_archive(
-        file: UploadFile = File(...),
-        language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
+    file: UploadFile = File(...),
+    language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
 ):
     try:
         # Чтение архива из памяти
         archive_content = await file.read()
 
         # Парсим структуру архива с уникальной папкой для каждого запроса
-        structure = parse_archive(archive_content)
+        project_dir, structure = parse_archive(archive_content)
 
-        # Здесь можно добавить обработку или сохранение информации о языке
-        return {
-            "message": "Archive uploaded and extracted successfully!",
-            "language": language,
-            "structure": structure
-        }
+        # Линтинг кода в зависимости от языка
+        if language == "python":
+            lint_results = lint_python(project_dir)
+        elif language == "csharp":
+            lint_results = lint_csharp(project_dir)
+        elif language == "typescript":
+            lint_results = lint_typescript(project_dir)
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported language")
+
+        # Генерация PDF отчета
+        pdf_path = generate_pdf_report(lint_results, language)
+
+        return {"message": "Archive uploaded, extracted, and linted successfully!",
+                "structure": structure,
+                "pdf_report": pdf_path}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 
 @app.post("/upload-code/")
