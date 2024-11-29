@@ -15,14 +15,14 @@ def generate_response(model_name, user_message):
         "messages": [
             {
                 "role": "system",
-                "content": "answer in english"
+                "content": "отвечай всегда на русском"
             },
             {
                 "role": "user",
                 "content": user_message
             }
         ],
-        "max_tokens": 4000,
+        "max_tokens": 1000,
         "temperature": 0.3
     }
 

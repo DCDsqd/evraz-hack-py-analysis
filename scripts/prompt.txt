@@ -1,35 +1,61 @@
-{
-  "structure": "├── gis/
-│   ├── .gitignore
-│   ├── .gitlab-ci.yml
-│   ├── APP_NAME_IS_UNDEFINED-ACTIVE_PROFILE_IS_UNDEFINED.log
-│   ├── Dockerfile
-│   ├── etc/
-│   │   ├── prometheus-jmx-conf.yaml
-│   ├── gis-eb-adapter-ACTIVE_PROFILE_IS_UNDEFINED.log
-│   ├── gis-eb-adapter-example.log
-│   ├── gis-eb-adapter-local.log
-│   ├── pom.xml
-│   ├── README.md
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   ├── ru/
-│   │   │   │   │   ├── seventech/
-│   │   │   │   │   │   ├── gisebadapter/
-│   │   │   │   │   │   │   ├── Application.java
-│   │   │   │   │   │   │   ├── config/
-│   │   │   │   │   │   │   │   ├── AsyncConfig.java
-│   │   │   │   │   │   │   │   ├── MdmRabbitConfig.java
-│   │   │   │   │   │   │   │   ├── SmevRabbitConfig.java
-│   │   │   │   │   │   │   ├── controller/
-│   │   │   │   │   │   │   │   ├── DateUtils.java
-│   │   │   │   │   │   │   │   ├── PageResponse.java
-│   │   │   │   │   │   │   │   ├── ProtocolsController.java
-│   │   │   │   │   │   │   │   ├── RequestSubsidyDetailsController.java
-│   │   │   │   │   │   │   │   ├── SchedulerController.java
-│   │   │   │   │   │   │   │   ├── SelectionCipherAndLinkController.java
-│   │   │   │   │   │   │   │   ├── WinnersController.java
-│   │   │   │   │   │   │   ├── dao/
-│   │   │   │   │   │   │   │   ├── BaseDao.java
-│   │   │   │   │   │   │   │   ├── ProtocolsDao.java
+привект
+помоги со структурой проекта
+вот его структура:
+├── 2020.2-Anunbis-develop
+│   ├── app
+│   │   ├── app.py
+│   │   ├── config.py
+│   │   ├── controller
+│   │   │   ├── auth_resources.py
+│   │   │   ├── course_resources.py
+│   │   │   ├── __init__.py
+│   │   │   ├── post_resources.py
+│   │   │   ├── professor_resources.py
+│   │   │   ├── report_resources.py
+│   │   │   └── student_resources.py
+│   │   ├── docs
+│   │   │   ├── auth.py
+│   │   │   ├── course.py
+│   │   │   ├── __init__.py
+│   │   │   ├── post.py
+│   │   │   ├── professor.py
+│   │   │   ├── report.py
+│   │   │   └── student.py
+│   │   ├── ext
+│   │   │   ├── auth.py
+│   │   │   ├── cors.py
+│   │   │   ├── database.py
+│   │   │   ├── email.py
+│   │   │   ├── __init__.py
+│   │   │   ├── migrate.py
+│   │   │   ├── seed.py
+│   │   │   └── swagger.py
+│   │   ├── __init__.py
+│   │   ├── model
+│   │   │   ├── course.py
+│   │   │   ├── discipline.py
+│   │   │   ├── __init__.py
+│   │   │   ├── post.py
+│   │   │   ├── professor.py
+│   │   │   ├── report.py
+│   │   │   ├── student.py
+│   │   │   └── user.py
+│   │   ├── schemas
+│   │   │   ├── course_schema.py
+│   │   │   ├── discipline_schema.py
+│   │   │   ├── __init__.py
+│   │   │   ├── post_schema.py
+│   │   │   ├── professor_schema.py
+│   │   │   ├── report_schema.py
+│   │   │   ├── student_schema.py
+│   │   │   └── user_schema.py
+│   │   ├── services
+│   │   │   ├── auth_services.py
+│   │   │   ├── course_services.py
+│   │   │   ├── discipline_services.py
+│   │   │   ├── __init__.py
+│   │   │   ├── post_services.py
+│   │   │   ├── professor_services.py
+│   │   │   ├── report_services.py
+│   │   │   ├── student_services.py
+│   │   │   └── user_services.py
