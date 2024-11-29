@@ -1,8 +1,6 @@
 import subprocess
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-import tempfile
-from fpdf import FPDF
 
 
 # Функция для линтинга Python кода
@@ -45,36 +43,52 @@ def lint_typescript(project_dir: str) -> str:
         return f"Error linting TypeScript project: {str(e)}"
 
 
-
-def generate_pdf_report(lint_results: str, language: str) -> str:
+def generate_pdf_report(lint_results: str, language: str, output_pdf_path: str = "linter_report.pdf"):
     """
-    Генерирует PDF с отчетом о линтинге.
-    :param lint_results: Строка с результатами линтинга.
-    :param language: Язык программирования (для заголовка).
-    :return: Путь к сохраненному PDF файлу.
+    Генерирует PDF отчет с результатами линтинга, добавляя автоперенос строк для длинных сообщений.
+
+    :param lint_results: Результаты линтинга как строка.
+    :param language: Язык проекта (python, csharp, typescript).
+    :param output_pdf_path: Путь для сохранения итогового PDF.
     """
-    # Создаем объект PDF
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
+    # Максимальная длина строки в символах перед переносом
+    max_line_length = 115
 
-    # Заголовок отчета
-    pdf.set_font('Arial', 'B', 16)
-    pdf.cell(10, 10, f"Linter Report - {language.capitalize()} Project", ln=True, align='C')
+    # Разбиваем результат на строки, если они длиннее max_line_length
+    lines = []
+    for line in lint_results.split('\n'):
+        while len(line) > max_line_length:
+            lines.append(line[:max_line_length])
+            line = line[max_line_length:]
+        lines.append(line)
 
-    # Текст отчета
-    pdf.ln(10)  # Добавляем отступ после заголовка
-    pdf.set_font('Arial', '', 12)
+    # Создание PDF
+    c = canvas.Canvas(output_pdf_path, pagesize=letter)
+    width, height = letter  # Размер страницы
 
-    # Разбиваем результат линтинга на строки и добавляем их в PDF
-    lines = lint_results.splitlines()
+    # Шрифт и размер шрифта
+    c.setFont("Helvetica", 10)
 
+    # Начальная позиция для текста
+    y_position = height - 40  # Отступ сверху от края страницы
+
+    # Добавляем заголовок
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(40, y_position, f"Linter Report - {language.capitalize()} Project")
+    y_position -= 20  # Отступ после заголовка
+
+    # Добавляем результаты линтинга
+    c.setFont("Helvetica", 10)
     for line in lines:
-        # Добавляем строку в PDF с автоматическим переносом
-        pdf.multi_cell(0, 10, line)
+        # Если строка не помещается на странице, переходим на новую
+        if y_position < 40:
+            c.showPage()
+            c.setFont("Helvetica", 10)
+            y_position = height - 40
 
-    # Сохраняем PDF в файл
-    pdf_output_path = "lint_report.pdf"
-    pdf.output(pdf_output_path)
+        c.drawString(40, y_position, line)
+        y_position -= 12  # Отступ между строками
 
-    return pdf_output_path
+    # Сохраняем PDF
+    c.save()
+    return output_pdf_path
