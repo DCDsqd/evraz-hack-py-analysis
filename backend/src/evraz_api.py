@@ -62,10 +62,3 @@ def generate_response(user_message, system_message, model_name=MODEL_NAME):
             print("Неверная структура ответа (отсутствуют выборы).")
     else:
         print("Ошибка генерации ответа:", response.content)
-
-
-def main():
-
-
-if __name__ == "__main__":
-    main()
