@@ -19,7 +19,7 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.post("/upload-archive/")
+@app.post("/upload-archive")
 async def upload_archive(
     file: UploadFile = File(...),
     language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
@@ -52,7 +52,7 @@ async def upload_archive(
 
 
 
-@app.post("/upload-code/")
+@app.post("/upload-code")
 async def upload_code(
         file: UploadFile = File(...),
         language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
