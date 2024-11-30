@@ -2,6 +2,7 @@ import requests
 import json
 
 
+
 API_URL = "http://84.201.152.196:8020/v1"
 API_KEY = "Nmg7hPuSdKsluqNiBBzwL9Stz5JKGEx4"
 
@@ -33,11 +34,11 @@ def get_models():
 
 
 def get_default_context():
-    static_context_arr = {}
+    static_context_arr = []
     try:
-        with open('static_context.json', 'r', encoding='utf-8') as f:
+        with open('backend/prompts/static_context.json', 'r', encoding='utf-8') as f:
             static_context_data = json.load(f)
-            static_context_arr = static_context_data.get('static_context', {})
+            static_context_arr = static_context_data.get('static_context', [])
     except FileNotFoundError:
         print("Файл static_context.json не найден.")
     except json.JSONDecodeError:
@@ -52,12 +53,12 @@ def generate_response(user_message, system_message, static_context_arr=None, mod
 
     data = {
         "model": model_name,
-        "messages": [
+        "messages": static_context_arr
+        + [    
             {
                 "role": "system",
                 "content": system_message
             },
-            static_context_arr,
             {
                 "role": "user",
                 "content": user_message

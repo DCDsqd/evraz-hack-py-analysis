@@ -3,6 +3,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, Query
 from enum import Enum
 from backend.src.archive_handler import parse_archive
 from backend.src.linter import lint_python, lint_typescript, lint_csharp, generate_pdf_report
+from backend.src.evraz_sender import send_to_evraz
 
 app = FastAPI()
 
@@ -30,6 +31,8 @@ async def upload_archive(
 
         # Парсим структуру архива с уникальной папкой для каждого запроса
         project_dir, structure = parse_archive(archive_content)
+
+        send_to_evraz(project_dir, structure)
 
         # Линтинг кода в зависимости от языка
         if language == "python":
