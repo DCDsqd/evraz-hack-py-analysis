@@ -53,12 +53,13 @@ class ChatService:
         user = self.user_repo.get_by_username(token)
         location = self.location_repo.get_by_name(name)
         return user, location
-2. Нарушение стиля кода
+``` 
+### 2. Нарушение стиля кода
 Проблема:
 В файле LinkFragmentValidator.cs используется условный оператор без фигурных скобок, что нарушает стандарты стиля кодирования.
 
 Пример нарушения:
-if (!Guid.TryParse(fragment.Target, out Guid dealerId))
+```if (!Guid.TryParse(fragment.Target, out Guid dealerId))
     return ValidationResult.Error("Target must be of typ Guid");
 Предложенное исправление:
 Добавить фигурные скобки для улучшения читаемости и предотвращения потенциальных ошибок:
@@ -66,24 +67,27 @@ if (!Guid.TryParse(fragment.Target, out Guid dealerId))
 if (!Guid.TryParse(fragment.Target, out Guid dealerId)) {
     return ValidationResult.Error("Target must be of typ Guid");
 }
-3. Некорректное наименование типа
+```
+### 3. Некорректное наименование типа
 Проблема:
 В файле ui.tsx используется тип ProductProps, который не соответствует наименованию компонента ProductItem.
 
 Пример нарушения:
-type ProductProps = {
+```type ProductProps = {
   product: Product;
   theme: Theme;
   setProduct: (product: Product) => void;
 };
-Предложенное исправление:
+```
+###Предложенное исправление:
 Переименовать тип в ProductItemProps, чтобы он отражал наименование компонента:
 
-type ProductItemProps = {
+```type ProductItemProps = {
   product: Product;
   theme: Theme;
   setProduct: (product: Product) => void;
 };
+```
 Как исправить ошибки
 Архитектурное нарушение:
 
@@ -106,10 +110,10 @@ RCS для C#
 Разработка и контрибьюции
 Форк репозитория и клонируйте на свой локальный компьютер:
 
-git clone https://github.com/your_username/project_name.git
+```git clone https://github.com/your_username/project_name.git```
 Создайте свою ветку:
 
-git checkout -b fix/your-fix-name
+```git checkout -b fix/your-fix-name```
 Внесите изменения, убедитесь, что исправления соответствуют стандартам и рекомендациям из этого документа.
 
 Создайте пулл-запрос для внесения изменений в основной репозиторий.
