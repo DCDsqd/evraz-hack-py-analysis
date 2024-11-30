@@ -1,46 +1,26 @@
-from io import BytesIO
-import os
-import uuid
 import zipfile
-from datetime import datetime
+import os
 
-
-def parse_archive(archive_content: bytes, root_dir: str = "extracted_files"):
+def handle_zip_file(file_path: str):
     """
-    Распаковывает архив в уникальную папку, парсит структуру и возвращает строку с иерархией файлов и папок.
-
-    :param archive_content: Содержимое архива в байтах.
-    :param root_dir: Корневая папка для извлечения файлов.
-    :return: Путь к извлеченной папке и строку с иерархией файлов и папок.
+    Распаковывает .zip файл и возвращает структуру файлов и путь к распакованной папке.
     """
-
-    # Получаем текущую дату и время и форматируем их
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-    # Создаем уникальную папку для каждого запроса, добавляя таймстамп
-    unique_dir = f"{timestamp}_{uuid.uuid4()}"
-    
-    extract_path = os.path.join(root_dir, unique_dir)
+    extract_path = f"extracted/{os.path.basename(file_path).replace('.zip', '')}"
 
     try:
-        # Создаем директорию для извлечения
-        os.makedirs(extract_path, exist_ok=True)
+        # Распаковываем архив
+        with zipfile.ZipFile(file_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_path)
 
-        # Открываем и распаковываем архив
-        with zipfile.ZipFile(BytesIO(archive_content)) as archive:
-            archive.extractall(extract_path)  # Извлекаем все файлы в уникальную папку
+        # Получаем структуру директорий
+        structure = get_directory_structure(extract_path)
 
-            # Получаем структуру директорий
-            structure = get_directory_structure(extract_path)
-
-            # Возвращаем путь к извлеченной папке и структуру
-            return extract_path, structure
+        return extract_path, structure
 
     except zipfile.BadZipFile:
-        raise Exception("Bad zip file")
+        raise Exception("Невалидный .zip файл.")
     except Exception as e:
-        raise Exception(f"Error extracting archive: {str(e)}")
-
+        raise Exception(f"Ошибка при распаковке архива: {str(e)}")
 
 def get_directory_structure(root_dir: str) -> str:
     """
@@ -50,12 +30,9 @@ def get_directory_structure(root_dir: str) -> str:
     """
     structure = ""
     for root, dirs, files in os.walk(root_dir):
-        # Определяем уровень вложенности
         level = root.replace(root_dir, '').count(os.sep)
         indent = ' ' * 4 * level
         structure += f"{indent}{os.path.basename(root)}/\n"
-
-        # Добавляем файлы на текущем уровне
         for f in files:
             structure += f"{indent}    {f}\n"
     return structure
