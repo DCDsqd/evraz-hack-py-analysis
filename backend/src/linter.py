@@ -42,8 +42,23 @@ def lint_typescript(project_dir: str) -> str:
     except Exception as e:
         return f"Error linting TypeScript project: {str(e)}"
 
+def trim_logs(logs: str, base_path: str) -> str:
+    """
+    Убирает лишнюю часть пути из логов, оставляя относительный путь.
 
-def generate_pdf_report(lint_results: str, language: str, output_pdf_path: str = "linter_report.pdf"):
+    :param logs: Логи линтера как строка.
+    :param base_path: Базовый путь, который нужно удалить из логов.
+    :return: Отредактированные логи.
+    """
+    trimmed_logs = []
+    for line in logs.split('\n'):
+        # Если строка содержит базовый путь, удаляем его
+        if base_path in line:
+            line = line.replace(base_path, '')
+        trimmed_logs.append(line)
+    return '\n'.join(trimmed_logs)
+
+def generate_pdf_report(base_path: str, lint_results: str, language: str, output_pdf_path: str = "linter_report.pdf"):
     """
     Генерирует PDF отчет с результатами линтинга, добавляя автоперенос строк для длинных сообщений.
 
@@ -53,6 +68,8 @@ def generate_pdf_report(lint_results: str, language: str, output_pdf_path: str =
     """
     # Максимальная длина строки в символах перед переносом
     max_line_length = 115
+    base_path += "\evraz-hack-py-analysis"
+    lint_results = trim_logs(lint_results, base_path)
 
     # Разбиваем результат на строки, если они длиннее max_line_length
     lines = []
