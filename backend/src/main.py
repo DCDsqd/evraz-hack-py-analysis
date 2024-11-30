@@ -30,7 +30,7 @@ async def upload_archive(
 
         # Парсим структуру архива с уникальной папкой для каждого запроса
         project_dir, structure = parse_archive(archive_content)
-
+        print(project_dir)
         # Линтинг кода в зависимости от языка
         if language == "python":
             lint_results = lint_python(project_dir)
@@ -42,7 +42,7 @@ async def upload_archive(
             raise HTTPException(status_code=400, detail="Unsupported language")
 
         # Генерация PDF отчета
-        pdf_path = generate_pdf_report(lint_results, language)
+        pdf_path = generate_pdf_report(project_dir, lint_results, language)
 
         return {"message": "Archive uploaded, extracted, and linted successfully!",
                 "structure": structure,
