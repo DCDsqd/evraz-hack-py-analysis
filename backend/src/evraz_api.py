@@ -70,7 +70,6 @@ def generate_response(user_message, system_message, static_context_arr=None, mod
     response = requests.post(f"{API_URL}/completions", json=data, headers=headers)
     if response.status_code == 200:
         result = response.json()
-        # Извлечение и вывод ответа от ассистента
         if 'choices' in result and len(result['choices']) > 0:
             message = result['choices'][0].get('message', {})
             if message.get('role') == 'assistant':

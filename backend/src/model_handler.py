@@ -9,11 +9,8 @@ headers = {
 }
 
 def generate_model_response(extracted_files_path: str):
-    """
-    Отправляет данные в модель и получает ответ.
-    """
     data = {
-        "input": extracted_files_path  # здесь может быть специфическая логика передачи данных в модель
+        "input": extracted_files_path
     }
     response = requests.post(f"{API_URL}/process", json=data, headers=headers)
 
