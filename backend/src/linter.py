@@ -91,7 +91,7 @@ def generate_pdf_report(base_path: str, lint_results: str, language: str, output
 
     # Добавляем заголовок
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(40, y_position, f"Linter Report - {language.capitalize()} Project")
+    c.drawString(40, y_position, f"Репорт умного линтера - {language.capitalize()}")
     y_position -= 20  # Отступ после заголовка
 
     # Добавляем результаты линтинга
