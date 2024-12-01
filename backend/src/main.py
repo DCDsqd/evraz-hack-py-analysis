@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, File, UploadFile, HTTPException, Query
+from fastapi.responses import FileResponse
 from enum import Enum
 from backend.src.archive_handler import parse_archive
 from backend.src.linter import lint_python, lint_typescript, lint_csharp, generate_pdf_report
@@ -21,8 +22,8 @@ def read_root():
 
 @app.post("/upload-archive")
 async def upload_archive(
-    file: UploadFile = File(...),
-    language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
+        file: UploadFile = File(...),
+        language: Language = Query(..., description="Select the project language (python, csharp, typescript)")
 ):
     try:
         # Чтение архива из памяти
@@ -31,6 +32,7 @@ async def upload_archive(
         # Парсим структуру архива с уникальной папкой для каждого запроса
         project_dir, structure = parse_archive(archive_content)
         print(project_dir)
+
         # Линтинг кода в зависимости от языка
         if language == "python":
             lint_results = lint_python(project_dir)
@@ -44,12 +46,24 @@ async def upload_archive(
         # Генерация PDF отчета
         pdf_path = generate_pdf_report(project_dir, lint_results, language)
 
-        return {"message": "Archive uploaded, extracted, and linted successfully!",
-                "structure": structure,
-                "pdf_report": pdf_path}
+        # Возвращаем PDF файл
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            filename="lint_report.pdf"
+        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
+@app.get("/download-report")
+async def download_report(file_path: str):
+    """
+    Эндпоинт для скачивания PDF отчета.
+    """
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(file_path, media_type="application/pdf", filename=os.path.basename(file_path))
 
 
 @app.post("/upload-code")
